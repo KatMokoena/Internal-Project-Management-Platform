@@ -2,7 +2,7 @@
 
 The dashboard counts every engagement and flags the ones at risk. Opening a project shows the deadline against the projected finish, and the critical path names the step with no slack.
 
-![Dashboard shows 4 at risk, the order stays at risk with Pack and ship 138 days overdue, then the overview Gantt](demo.gif)
+![Dashboard shows 4 at risk, the order stays at risk with Pack and ship 138 days overdue, then the overview Gantt](walkthrough.gif)
 
 ## Stack
 
