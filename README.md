@@ -1,8 +1,8 @@
-# Order Timeline
+# Project delivery
 
-When a purchase arrives late, every step waiting on it shifts, and the order is marked on track, at risk, or late from the days left before the deadline.
+The dashboard counts every engagement and flags the ones at risk. Opening a project shows the deadline against the projected finish, and the critical path names the step with no slack.
 
-![Enclosure delivery moves from 6 Mar to 18 Mar, and the order finishes 28 Mar, 2 days late](demo.gif)
+![Dashboard shows 4 at risk, the order stays at risk with Pack and ship 138 days overdue, then the overview Gantt](demo.gif)
 
 ## Stack
 
@@ -63,20 +63,22 @@ When a purchase arrives late, every step waiting on it shifts, and the order is 
 
 No install. Double-click `Open-Demo.ps1`, or open `demo/index.html` in Chrome or Edge.
 
-The order starts on its own. The enclosure is due 6 Mar, and the order is on track with 10 days of buffer. The delivery then slips 12 days. Replay runs that again. Slip delivery pushes the purchase later still.
+The walkthrough plays on its own: the dashboard, the at-risk filter, the order, the critical path, then the overview Gantt. Replay runs it again.
 
 | What to look at | Result |
 | --- | --- |
-| Orders on the board | 2 |
-| Buffer before the slip | 10 days, on track |
-| Enclosure delivery | 6 Mar, then 18 Mar |
-| Ship date after the slip | 28 Mar |
-| Against the 26 Mar deadline | Late, 2 days past |
-| Steps with no slack | Panel wiring, factory test, pack and ship |
-| Label artwork | Stays on 9–10 Mar |
+| Engagements | 15 |
+| Active | 3 |
+| Completed | 8 |
+| At risk | 4 |
+| On-time, closed | 0% |
+| Tasks complete | 78.8% |
+| Opened order | PRJ-2026-001, at risk |
+| Deadline | 30/10/2026, tasks still open |
+| Critical step | Pack and ship, 138 days overdue, no slack |
 
-![On track, ship 16 Mar, 10 days before the deadline](screenshots/01-on-track.png)
+![Dashboard: 15 engagements, 4 at risk](screenshots/01-dashboard.png)
 
-![Delivery at 12 Mar, 4 days of buffer, at risk](screenshots/02-at-risk.png)
+![PRJ-2026-001 at risk, deadline passed, tasks still open](screenshots/03-timeline.png)
 
-![Late: ship 28 Mar, 2 days past the deadline](screenshots/03-late.png)
+![Critical path: Pack and ship is 138 days overdue](screenshots/04-critical.png)

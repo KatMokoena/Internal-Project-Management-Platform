@@ -3,447 +3,77 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Order Timeline</title>
+  <title>Project delivery</title>
   <style>
-    :root {
-      --ok: #0b8f62;
-      --ok-soft: #e5f6ef;
-      --risk: #b86e00;
-      --risk-soft: #fff4e0;
-      --late: #c62828;
-      --late-soft: #fdecec;
-      --ink: #142033;
-      --muted: #5c6b7a;
-      --line: #d5dee8;
-      --card: #ffffff;
-      --bg: #e7eef5;
-      --slack: #3d6f9a;
-      --done: #0b8f62;
-    }
     * { box-sizing: border-box; }
     html, body {
       margin: 0;
-      width: 1120px;
-      height: 700px;
-      overflow: hidden;
-      background: var(--bg);
-      color: var(--ink);
+      background: #0f1724;
+      color: #e8eef5;
       font-family: "Segoe UI", system-ui, sans-serif;
     }
-    button { font-family: inherit; cursor: pointer; }
-    .app { height: 700px; display: flex; flex-direction: column; }
+    body { min-height: 100vh; display: flex; flex-direction: column; }
     header {
-      height: 74px;
       display: flex;
-      align-items: center;
       justify-content: space-between;
+      align-items: center;
       gap: 16px;
-      padding: 0 18px;
-      background: #fff;
-      border-bottom: 1px solid var(--line);
+      padding: 12px 16px;
     }
-    .brand { display: flex; align-items: center; gap: 12px; }
-    .mark { width: 34px; height: 34px; display: grid; gap: 3px; align-content: center; }
-    .mark span { display: block; height: 6px; border-radius: 2px; }
-    .mark span:nth-child(1) { width: 28px; background: var(--ok); }
-    .mark span:nth-child(2) { width: 20px; background: var(--risk); }
-    .mark span:nth-child(3) { width: 12px; background: var(--late); }
-    h1 { margin: 0; font-size: 18px; letter-spacing: -0.02em; }
-    .brand p { margin: 2px 0 0; color: var(--muted); font-size: 12px; }
-    .actions { display: flex; gap: 8px; }
-    .actions button {
-      border: 1px solid var(--line);
-      background: #fff;
-      color: var(--ink);
+    h1 { margin: 0; font-size: 16px; }
+    p { margin: 2px 0 0; color: #9aabbd; font-size: 13px; }
+    button {
+      border: 0;
       border-radius: 8px;
-      padding: 8px 12px;
-      font-size: 13px;
-      font-weight: 600;
-    }
-    .actions button.primary { background: var(--ink); color: #fff; border-color: var(--ink); }
-    main { flex: 1; padding: 14px 16px 16px; display: flex; flex-direction: column; gap: 12px; min-height: 0; }
-    .metrics { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
-    .metric {
-      background: var(--card);
-      border: 1px solid var(--line);
-      border-radius: 12px;
-      padding: 10px 14px;
-      display: flex;
-      align-items: baseline;
-      justify-content: space-between;
-    }
-    .metric b { font-size: 28px; font-variant-numeric: tabular-nums; line-height: 1; }
-    .metric span { font-size: 13px; font-weight: 700; }
-    .metric.ok b, .metric.ok span { color: var(--ok); }
-    .metric.risk b, .metric.risk span { color: var(--risk); }
-    .metric.late b, .metric.late span { color: var(--late); }
-    .board { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; align-items: start; }
-    .order-card {
-      background: #fff;
-      border: 1px solid var(--line);
-      border-radius: 14px;
-      padding: 16px 16px 14px;
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-    }
-    .order-card.active { border-color: #8aa4be; box-shadow: 0 0 0 3px rgba(20, 32, 51, 0.06); }
-    .card-top, .row-between { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
-    .ref { font-size: 12px; font-weight: 700; color: var(--muted); letter-spacing: 0.04em; }
-    .order-card h2 { margin: 0; font-size: 20px; letter-spacing: -0.02em; }
-    .who { margin: 0; color: var(--muted); font-size: 14px; }
-    .facts { margin-top: 14px; display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-    .fact { background: #f6f8fb; border-radius: 8px; padding: 8px 10px; }
-    .fact small { display: block; color: var(--muted); font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; }
-    .fact b { font-size: 14px; }
-    .pill {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      border-radius: 999px;
-      padding: 4px 10px;
-      font-size: 12px;
-      font-weight: 800;
-      white-space: nowrap;
-    }
-    .pill i { width: 8px; height: 8px; border-radius: 50%; display: block; background: currentColor; }
-    .pill.ok { background: var(--ok-soft); color: var(--ok); }
-    .pill.risk { background: var(--risk-soft); color: var(--risk); }
-    .pill.late { background: var(--late-soft); color: var(--late); }
-    .workspace { flex: 1; min-height: 0; display: grid; grid-template-columns: 250px 1fr; grid-template-rows: minmax(0, 1fr); gap: 12px; }
-    .rail, .gantt-card {
-      background: #fff;
-      border: 1px solid var(--line);
-      border-radius: 14px;
-      min-height: 0;
-    }
-    .rail { padding: 14px; display: flex; flex-direction: column; gap: 12px; }
-    .rail h2 { margin: 0; font-size: 15px; }
-    .kicker { margin: 0; color: var(--muted); font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; }
-    .big { margin: 0; font-size: 28px; letter-spacing: -0.03em; }
-    .sub { margin: 0; color: var(--muted); font-size: 13px; line-height: 1.35; }
-    .path { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px; }
-    .path li {
-      display: flex;
-      justify-content: space-between;
-      gap: 8px;
-      font-size: 13px;
-      padding: 6px 8px;
-      border-radius: 8px;
-      background: #f6f8fb;
-    }
-    .path li.ok { background: var(--ok-soft); color: var(--ok); font-weight: 700; }
-    .path li.risk { background: var(--risk-soft); color: var(--risk); font-weight: 700; }
-    .path li.late { background: var(--late-soft); color: var(--late); font-weight: 700; }
-    .path li.slack { color: var(--slack); font-weight: 700; }
-    .gantt-card { padding: 12px 14px 10px; display: flex; flex-direction: column; }
-    .gantt-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; margin-bottom: 8px; }
-    .gantt-head h2 { margin: 0; font-size: 16px; }
-    .note { margin: 3px 0 0; color: var(--muted); font-size: 12.5px; line-height: 1.35; max-width: 520px; }
-    .scale { position: relative; height: 22px; margin-left: 148px; }
-    .scale span { position: absolute; top: 0; font-size: 11px; color: var(--muted); font-weight: 700; transform: translateX(-50%); }
-    .rows { position: relative; flex: 1; display: flex; flex-direction: column; justify-content: space-between; min-height: 0; }
-    .deadline, .after {
-      position: absolute;
-      top: 0;
-      bottom: 0;
-      pointer-events: none;
-    }
-    .after { background: rgba(198, 40, 40, 0.06); }
-    .deadline { width: 2px; background: var(--late); z-index: 2; }
-    .deadline em {
-      position: absolute;
-      top: 8px;
-      left: 8px;
-      font-style: normal;
-      font-size: 11px;
-      font-weight: 800;
-      color: var(--late);
-      white-space: nowrap;
-      background: #fff;
-      border-radius: 4px;
-      padding: 1px 5px;
-    }
-    .grow { display: grid; grid-template-columns: 148px 1fr; align-items: center; gap: 0; position: relative; z-index: 1; }
-    .grow label { font-size: 12.5px; font-weight: 700; display: flex; flex-direction: column; line-height: 1.15; }
-    .grow label small { font-size: 11px; font-weight: 600; color: var(--muted); }
-    .track { position: relative; height: 34px; background: #f4f7fa; border-radius: 6px; overflow: visible; }
-    .weekend {
-      position: absolute;
-      top: 0;
-      bottom: 0;
-      background: rgba(20, 32, 51, 0.04);
-    }
-    .bar, .diamond {
-      position: absolute;
-      top: 8px;
-      height: 18px;
-      border-radius: 5px;
-      transition: left 0.45s ease, width 0.45s ease;
-    }
-    .bar.ok, .diamond.ok { background: var(--ok); }
-    .bar.risk, .diamond.risk { background: var(--risk); }
-    .bar.late, .diamond.late { background: var(--late); }
-    .bar.done { background: var(--done); }
-    .bar.slack { background: var(--slack); }
-    .diamond {
-      width: 12px;
-      height: 12px;
-      top: 8px;
-      border-radius: 2px;
-      transform: translateX(-50%) rotate(45deg);
-    }
-    .tag {
-      position: absolute;
-      top: 4px;
-      font-size: 11px;
+      background: #e8eef5;
+      color: #142033;
+      font: inherit;
       font-weight: 700;
-      color: var(--ink);
-      white-space: nowrap;
+      padding: 8px 14px;
+      cursor: pointer;
     }
-    .hidden { display: none; }
+    img { width: 100%; height: auto; display: block; background: #101820; }
   </style>
 </head>
 <body>
-  <div class="app">
-    <header>
-      <div class="brand">
-        <div class="mark" aria-hidden="true"><span></span><span></span><span></span></div>
-        <div>
-          <h1>Order Timeline</h1>
-          <p>A late purchase moves every step that waits on it</p>
-        </div>
-      </div>
-      <div class="actions">
-        <button type="button" id="replay">Replay</button>
-        <button type="button" id="slip" class="primary">Slip delivery</button>
-      </div>
-    </header>
-    <main>
-      <section class="metrics" id="metrics"></section>
-      <section class="board hidden" id="board"></section>
-      <section class="workspace hidden" id="workspace">
-        <aside class="rail" id="rail"></aside>
-        <div class="gantt-card">
-          <div class="gantt-head">
-            <div>
-              <h2 id="gantt-title">Control panel assembly</h2>
-              <p class="note" id="gantt-note"></p>
-            </div>
-            <div id="gantt-pill"></div>
-          </div>
-          <div class="scale" id="scale"></div>
-          <div class="rows" id="rows">
-            <div class="after" id="after"></div>
-            <div class="deadline" id="deadline"><em>Deadline 26 Mar</em></div>
-          </div>
-        </div>
-      </section>
-    </main>
-  </div>
+  <header>
+    <div>
+      <h1>Project delivery</h1>
+      <p id="caption">Dashboard: 15 engagements, 4 at risk.</p>
+    </div>
+    <button type="button" id="replay">Replay</button>
+  </header>
+  <img id="shot" alt="Project dashboard with 15 engagements and 4 at risk" src="../screenshots/01-dashboard.png" />
   <script>
-    const START = new Date(2026, 2, 2);
-    const DEADLINE = new Date(2026, 2, 26);
-    const BASE_ENCLOSURE = new Date(2026, 2, 6);
-    const RANGE_DAYS = 42;
-    const OTHER = { status: "on_track", ship: new Date(2026, 2, 20), deadline: new Date(2026, 3, 10) };
-
-    function addDays(date, days) {
-      return new Date(date.getFullYear(), date.getMonth(), date.getDate() + days);
-    }
-    function addSpan(start, duration) {
-      const first = new Date(start.getFullYear(), start.getMonth(), start.getDate());
-      return { start: first, end: addDays(first, duration) };
-    }
-    function schedule(slip) {
-      const enclosure = addDays(BASE_ENCLOSURE, slip);
-      const wiring = addSpan(enclosure, 5);
-      const test = addSpan(addDays(wiring.end, 1), 2);
-      const ship = addSpan(addDays(test.end, 1), 1);
-      const buffer = Math.round((DEADLINE - ship.end) / 86400000);
-      let status = "on_track";
-      if (ship.end > DEADLINE) status = "late";
-      else if (buffer < 7) status = "at_risk";
-      return { slip: slip, enclosure: enclosure, wiring: wiring, test: test, ship: ship, buffer: buffer, status: status };
-    }
-    function fmt(date) {
-      const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-      return date.getDate() + " " + months[date.getMonth()];
-    }
-    function indexOf(date) {
-      return Math.round((date - START) / 86400000);
-    }
-    function statusLabel(status) {
-      if (status === "late") return "Late";
-      if (status === "at_risk") return "At risk";
-      return "On track";
-    }
-    function bufferLabel(plan) {
-      if (plan.buffer < 0) return Math.abs(plan.buffer) + " days past";
-      if (plan.buffer === 0) return "0 days left";
-      return plan.buffer + " days left";
-    }
-    function counts(status) {
-      const tally = { on_track: 1, at_risk: 0, late: 0 };
-      tally[status] += 1;
-      return tally;
-    }
-    function pill(status, text) {
-      const kind = status === "late" ? "late" : status === "at_risk" ? "risk" : "ok";
-      return '<span class="pill ' + kind + '"><i></i>' + text + "</span>";
-    }
-
-    const params = new URLSearchParams(location.search);
-    const frozen = params.has("slip") || params.has("view");
-    const state = {
-      view: params.get("view") === "board" ? "board" : "order",
-      slip: Math.max(0, Math.min(16, Number(params.get("slip") || 0))),
-    };
+    const frames = [
+      ["../screenshots/01-dashboard.png", "Dashboard: 15 engagements, 4 at risk.", "Project dashboard with 15 engagements and 4 at risk"],
+      ["../screenshots/02-at-risk.png", "At risk filter: the overdue engagements stay on screen.", "At risk filter on the project dashboard"],
+      ["../screenshots/03-timeline.png", "PRJ-2026-001 is at risk. The deadline has passed and tasks are still open.", "Order timeline marked at risk, with the critical step overdue"],
+      ["../screenshots/04-critical.png", "Critical path: Pack and ship has no slack and is 138 days overdue.", "Critical path with Pack and ship 138 days overdue"],
+      ["../screenshots/05-gantt.png", "Overview Gantt for the same engagements.", "Overview Gantt chart of the engagements"]
+    ];
+    const shot = document.getElementById("shot");
+    const caption = document.getElementById("caption");
     let timers = [];
-
-    const metricsEl = document.getElementById("metrics");
-    const boardEl = document.getElementById("board");
-    const workspaceEl = document.getElementById("workspace");
-    const railEl = document.getElementById("rail");
-    const noteEl = document.getElementById("gantt-note");
-    const pillEl = document.getElementById("gantt-pill");
-    const rowsEl = document.getElementById("rows");
-    const scaleEl = document.getElementById("scale");
-    const deadlineEl = document.getElementById("deadline");
-    const afterEl = document.getElementById("after");
-
-    function percent(dayIndex) {
-      return (dayIndex / RANGE_DAYS) * 100;
-    }
-
-    function paintScale() {
-      const marks = [new Date(2026, 2, 2), new Date(2026, 2, 9), new Date(2026, 2, 16), new Date(2026, 2, 23), new Date(2026, 2, 30), new Date(2026, 3, 6)];
-      scaleEl.innerHTML = marks.map(function (date) {
-        return '<span style="left:' + percent(indexOf(date)) + '%">' + fmt(date) + "</span>";
-      }).join("");
-      const line = percent(indexOf(DEADLINE) + 1);
-      deadlineEl.style.left = "calc(148px + (100% - 148px) * " + (line / 100) + ")";
-      afterEl.style.left = deadlineEl.style.left;
-      afterEl.style.right = "0";
-    }
-
-    paintScale();
-
-    function bar(start, end, kind) {
-      const left = percent(indexOf(start));
-      const width = percent(indexOf(end) - indexOf(start) + 1);
-      return '<div class="bar ' + kind + '" style="left:' + left + '%;width:' + width + '%"></div>';
-    }
-
-    function milestone(date, kind) {
-      const left = percent(indexOf(date) + 0.5);
-      return '<div class="diamond ' + kind + '" style="left:' + left + '%"></div>';
-    }
-
-    function row(name, caption, inner) {
-      return '<div class="grow"><label>' + name + "<small>" + caption + '</small></label><div class="track">' + inner + "</div></div>";
-    }
-
-    function render() {
-      const plan = schedule(state.slip);
-      const tally = counts(plan.status);
-      const kind = plan.status === "late" ? "late" : plan.status === "at_risk" ? "risk" : "ok";
-      metricsEl.innerHTML = [
-        ["ok", tally.on_track, "On track"],
-        ["risk", tally.at_risk, "At risk"],
-        ["late", tally.late, "Late"],
-      ].map(function (item) {
-        return '<div class="metric ' + item[0] + '"><b>' + item[1] + "</b><span>" + item[2] + "</span></div>";
-      }).join("");
-
-      const activeFacts = [
-        ["Deadline", fmt(DEADLINE)],
-        ["Ship", fmt(plan.ship.end)],
-        ["Enclosure", fmt(plan.enclosure)],
-        ["Buffer", bufferLabel(plan)],
-      ];
-      boardEl.innerHTML = [
-        card("PRJ-2026-014", "Control panel assembly", "Northline Packaging", plan.status, activeFacts, true),
-        card("PRJ-2026-021", "Conveyor guards", "Harbor Forming", "on_track", [
-          ["Deadline", fmt(OTHER.deadline)],
-          ["Ship", fmt(OTHER.ship)],
-          ["Enclosure", "On time"],
-          ["Buffer", "21 days left"],
-        ], false),
-      ].join("");
-
-      const slackDays = Math.round((plan.ship.end - new Date(2026, 2, 10)) / 86400000);
-      railEl.innerHTML = [
-        '<p class="kicker">Purchase</p>',
-        "<h2>Enclosure</h2>",
-        '<p class="big">' + fmt(plan.enclosure) + "</p>",
-        '<p class="sub">' + (plan.slip === 0 ? "Due 6 Mar. No slip yet." : "Moved from 6 Mar, plus " + plan.slip + " days.") + " Wiring starts the day it arrives.</p>",
-        '<p class="kicker">Buffer</p>',
-        '<p class="big">' + bufferLabel(plan) + "</p>",
-        '<p class="sub">Deadline ' + fmt(DEADLINE) + ". Projected ship " + fmt(plan.ship.end) + ".</p>",
-        '<p class="kicker">Critical path</p>',
-        '<ul class="path"><li class="' + kind + '"><span>Panel wiring</span><span>No slack</span></li><li class="' + kind + '"><span>Factory test</span><span>No slack</span></li><li class="' + kind + '"><span>Pack and ship</span><span>No slack</span></li><li class="slack"><span>Label artwork</span><span>' + slackDays + " days slack</span></li></ul>",
-      ].join("");
-
-      noteEl.textContent = plan.slip === 0
-        ? "Enclosure arrives 6 Mar. The order finishes " + fmt(plan.ship.end) + ", with " + plan.buffer + " days before the deadline."
-        : "Enclosure moved from 6 Mar to " + fmt(plan.enclosure) + ". Ship moves to " + fmt(plan.ship.end) + ".";
-      pillEl.innerHTML = pill(plan.status, statusLabel(plan.status) + " · " + bufferLabel(plan));
-
-      const steps = [
-        row("Design release", "2–4 Mar", bar(new Date(2026, 2, 2), new Date(2026, 2, 4), "done")),
-        row("Label artwork", "9–10 Mar", bar(new Date(2026, 2, 9), new Date(2026, 2, 10), "slack")),
-        row("Enclosure", fmt(plan.enclosure), milestone(plan.enclosure, kind)),
-        row("Panel wiring", fmt(plan.wiring.start) + "–" + fmt(plan.wiring.end), bar(plan.wiring.start, plan.wiring.end, kind)),
-        row("Factory test", fmt(plan.test.start) + "–" + fmt(plan.test.end), bar(plan.test.start, plan.test.end, kind)),
-        row("Pack and ship", fmt(plan.ship.end), bar(plan.ship.start, plan.ship.end, kind)),
-      ];
-      rowsEl.querySelectorAll(".grow").forEach(function (node) { node.remove(); });
-      rowsEl.insertAdjacentHTML("beforeend", steps.join(""));
-
-      boardEl.classList.toggle("hidden", state.view !== "board");
-      workspaceEl.classList.toggle("hidden", state.view !== "order");
-    }
-
-    function card(ref, title, customer, status, facts, active) {
-      return '<article class="order-card' + (active ? " active" : "") + '"><div class="card-top"><span class="ref">' + ref + "</span>" + pill(status, statusLabel(status)) + '</div><h2>' + title + '</h2><p class="who">' + customer + '</p><div class="facts">' + facts.map(function (fact) {
-        return '<div class="fact"><small>' + fact[0] + "</small><b>" + fact[1] + "</b></div>";
-      }).join("") + "</div></article>";
-    }
-
     function stop() {
       timers.forEach(clearTimeout);
       timers = [];
     }
-    function later(ms, fn) {
-      timers.push(setTimeout(fn, ms));
-    }
-    function show(view, slip) {
-      state.view = view;
-      state.slip = slip;
-      render();
+    function show(index) {
+      shot.src = frames[index][0];
+      shot.alt = frames[index][2];
+      caption.textContent = frames[index][1];
     }
     function play() {
       stop();
-      show("board", 0);
-      later(1800, function () { show("order", 0); });
-      [2, 4, 6, 8, 10, 12].forEach(function (slip, index) {
-        later(3800 + index * 550, function () { show("order", slip); });
+      show(0);
+      frames.forEach(function (_, index) {
+        if (index === 0) return;
+        timers.push(setTimeout(function () { show(index); }, index * 1400));
       });
     }
-
     document.getElementById("replay").addEventListener("click", play);
-    document.getElementById("slip").addEventListener("click", function () {
-      stop();
-      show("order", Math.min(16, state.slip + 2));
-    });
-    window.__set = function (view, slip) {
-      stop();
-      show(view, slip);
-    };
-
-    if (frozen) render();
-    else play();
+    play();
   </script>
 </body>
 </html>
